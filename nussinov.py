@@ -32,6 +32,35 @@ def fill(i, j, seq, min_dist = 3, weights = [2, 3, 1]):
 
     return max(score_paired, score_i_not_paired, score_j_not_paired, score_bifurcation)
 
+def traceback(matrix, seq, weights):
+    stack = [(0,len(seq)-1)]
+    pairs = []
+    while(stack):
+        print(stack)
+        i, j = stack.pop()
+        print(int(matrix[i][j]))
+        if i >= j:
+            print('lol')
+            continue
+        elif int(matrix[i+1][j]) == int(matrix[i][j]):
+            print('sos')
+            stack.append((i+1, j))
+        elif int(matrix[i][j-1]) == int(matrix[i][j]):
+            print('sas')
+            stack.append((i, j-1))
+        elif int(matrix[i+1][j-1]) + int(is_paired((seq[i], seq[j], weights))) == int(matrix[i][j]):
+            print('sis')
+            pairs.append((i, j))
+            stack.append((i+1, j-1))
+        else:
+            for k in range(i, j):
+                print('sus')
+                if int(matrix[i][k-1]) + int(matrix[k+1][j-1]) + 1 == int(matrix[i][j]):
+                    stack.append((k+1, j))
+                    stack.append((i, k))
+                    break
+    return pairs
+
 def main():
     WEIGHTS = [1, 1, 1]
     MIN_DIST = 0
@@ -39,12 +68,15 @@ def main():
     LEN = len(SEQ)
     m = initialize(LEN, MIN_DIST)
     print(m)
-    secundary_structure = []
+    secondary_structure = []
     for k in range(LEN):
         for i in range(LEN-k):
             j = i + k
             m[i][j] = fill(i, j, SEQ, MIN_DIST, WEIGHTS)
     print(m)
+    pairs = traceback(m, SEQ, WEIGHTS)
+    print(pairs)
+    
     return 0
 
 
