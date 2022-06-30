@@ -61,23 +61,26 @@ def pairs_to_structure(pairs, seq):
         dots[i], dots[j] = '(', ')'
     return ''.join(dots)
 
+def nussinov(seq, weights, min_dist, seq_id):
+    length = len(seq)
+    m = initialize(length, min_dist)
+    for k in range(length):
+        for i in range(length-k):
+            j = i + k
+            m[i][j] = fill(i, j, seq, min_dist, weights)
+    pairs = traceback(m, seq, weights)
+    struct = pairs_to_structure(pairs, seq)
+    with open(seq_id + '.out', 'w') as f:
+        f.write('>' + seq_id + '\n' + seq + '\n' + struct)
+    
+    return 0
+
 def main():
     WEIGHTS = [2, 3, 1]
     MIN_DIST = 3
     SEQ = 'UGGGGUUUAAGGCCCC'
-    LEN = len(SEQ)
     SEQ_ID = 'test'
-    m = initialize(LEN, MIN_DIST)
-    print(m)
-    for k in range(LEN):
-        for i in range(LEN-k):
-            j = i + k
-            m[i][j] = fill(i, j, SEQ, MIN_DIST, WEIGHTS)
-    print(m)
-    pairs = traceback(m, SEQ, WEIGHTS)
-    struct = pairs_to_structure(pairs, SEQ)
-    with open(SEQ_ID + '.out', 'w') as f:
-        f.write('>' + SEQ_ID + '\n' + SEQ + '\n' + struct)
+    nussinov(SEQ, WEIGHTS, MIN_DIST, SEQ_ID)
 
     return 0
 
